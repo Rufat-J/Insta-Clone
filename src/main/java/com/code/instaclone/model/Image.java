@@ -17,6 +17,9 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "name")
+    private String name;
+
     @Lob
     @Column(name="data", nullable = false)
     private byte[] data;
@@ -35,9 +38,10 @@ public class Image {
 
      */
 
-    public Image(byte[] data, long size, String description) {
+    public Image(byte[] data, long size, String description, String name) {
         this.data = data;
         this.size = size;
         this.description = description;
+        this.name = name;
     }
 }

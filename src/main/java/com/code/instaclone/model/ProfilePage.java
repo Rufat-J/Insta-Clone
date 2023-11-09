@@ -27,7 +27,7 @@ public class ProfilePage {
     private User user;
 
     @OneToMany(mappedBy = "profilePage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MockImage> images;
+    private List<Image> images;
 
     public ProfilePage(String description) {
         this.description = description;

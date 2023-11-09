@@ -28,4 +28,12 @@ public class UserService {
 
     }
 
+    public ResponseEntity<Object> login(String username, String password) {
+        if(userRepository.isValidUser(username, password)) {
+            System.out.println("Logged in");
+        } else System.out.println("invalid");
+
+        return null;
+    }
+
 }

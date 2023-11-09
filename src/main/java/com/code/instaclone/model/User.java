@@ -1,12 +1,9 @@
 package com.code.instaclone.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Table(name = "users", schema = "public")
 @Entity
@@ -14,7 +11,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class User {
-    @Column(name = "id")
+    @Column(name = "user_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,6 +21,9 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfilePage profilePage;
 
     public User(String username, String password) {
         this.username = username;

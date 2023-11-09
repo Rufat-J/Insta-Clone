@@ -1,15 +1,12 @@
 package com.code.instaclone.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
@@ -17,9 +14,8 @@ import java.util.UUID;
 @Table(name = "profile_pages")
 public class ProfilePage {
 
-
     @Id
-    @Column(name = "id")
+    @Column(name = "profile_page_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int profilePageId;
 
@@ -27,7 +23,7 @@ public class ProfilePage {
     private String description;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "profilePage", cascade = CascadeType.ALL, orphanRemoval = true)

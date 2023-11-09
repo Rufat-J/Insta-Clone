@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Entity
@@ -15,7 +13,7 @@ import java.util.List;
 public class MockImage {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "mock_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -24,11 +22,10 @@ public class MockImage {
 
     @ManyToOne
     @JoinColumn(name = "profile_page_id")
-
-    private ProfilePage profilePageId;
+    private ProfilePage profilePage;
 
     public MockImage(String description, ProfilePage profilePage) {
         this.description = description;
-        this.profilePageId = profilePage;
+        this.profilePage = profilePage;
     }
 }

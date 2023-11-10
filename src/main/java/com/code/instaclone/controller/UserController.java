@@ -1,7 +1,9 @@
 package com.code.instaclone.controller;
 
+import com.code.instaclone.dto.LoginSuccess;
 import com.code.instaclone.model.User;
 import com.code.instaclone.service.UserService;
+import com.sun.net.httpserver.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody UserDTO user) {
-        return userService.login(user.username(), user.password());
+    public ResponseEntity<LoginSuccess> login(@RequestBody UserDTO user) {
+        var result = userService.login(user.username(), user.password());
+        return ResponseEntity.ok().body(result);
     }
 }

@@ -1,5 +1,7 @@
 package com.code.instaclone.service;
 
+import com.code.instaclone.dto.LoginSuccess;
+import com.code.instaclone.exception.InvalidLoginException;
 import com.code.instaclone.model.User;
 import com.code.instaclone.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,11 @@ public class UserService {
 
     }
 
-    public ResponseEntity<Object> login(String username, String password) {
+    public LoginSuccess login(String username, String password) {
         if(userRepository.isValidUser(username, password)) {
-            System.out.println("Logged in");
-        } else System.out.println("invalid");
+            return new LoginSuccess("Login successful", "token");
+        } else throw new InvalidLoginException("Login failed, incorrect username or password");
 
-        return null;
     }
 
 }

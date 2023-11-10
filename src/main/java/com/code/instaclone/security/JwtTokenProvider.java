@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class JwtTokenProvider {
 
-    private final String secret = UUID.randomUUID().toString();
+    private final String secret = "testwerwerwerwerwererwwerwerwerwetgwegwegwegwerwerwerwerwerwerwerwerw234234234wefr2342f234";
 
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
@@ -30,4 +30,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public boolean validToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
 }

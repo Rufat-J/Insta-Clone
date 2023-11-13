@@ -1,5 +1,6 @@
 package com.code.instaclone.controller;
 
+import com.code.instaclone.exception.InvalidLoginException;
 import com.code.instaclone.model.Image;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ImageService;
@@ -29,13 +30,7 @@ public class ImageController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
-        var isValid = jwtTokenProvider.validToken(token);
-        if(isValid) {
-            imageService.uploadImage(file);
-            return ResponseEntity.status(HttpStatus.OK).body("Upload");
-        }
-        return ResponseEntity
-
+        return ResponseEntity.ok(imageService.validateTokenForImage(token, file));
     }
 
     @GetMapping("/download")

@@ -1,16 +1,13 @@
 package com.code.instaclone.service;
 
-import com.code.instaclone.dto.LoginSuccess;
 import com.code.instaclone.dto.UploadSuccess;
+import com.code.instaclone.exception.ImageSizeTooLargeException;
 import com.code.instaclone.exception.InvalidLoginException;
+import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,14 +24,15 @@ public class ImageService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void uploadImage(MultipartFile file) throws IOException {
+    public ImageSizeTooLargeException uploadImage(MultipartFile file) throws IOException {
         byte[] imageData = file.getBytes();
-
+        long imageSize = file.getSize();
         Image image = new Image();
         image.setData(imageData);
         image.setName(file.getOriginalFilename());
-
+        image.setSize(imageSize);
         imageRepository.save(image);
+        return null;
     }
 
     public List<Image> getAllImages() {
@@ -43,10 +41,18 @@ public class ImageService {
 
     public UploadSuccess validateTokenForImage(String token, MultipartFile file) throws IOException {
         var isValid = jwtTokenProvider.validToken(token);
-        if(isValid) {
+        long imageSize = file.getSize();
+        long maxSize = 2 * 1024 * 10240;
+
+        if (isValid & imageSize <= maxSize) {
             uploadImage(file);
             return new UploadSuccess("Upload successful");
+        } else if (!isValid) {
+            throw new InvalidTokenException("Access denied.");
+
+        } else if (imageSize > maxSize) {
+            throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
         }
-        else throw new InvalidLoginException("Token validation failed");
+        return null;
     }
 }

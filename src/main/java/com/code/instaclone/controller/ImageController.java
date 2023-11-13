@@ -1,7 +1,9 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.model.Image;
+import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ImageService;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +18,24 @@ import java.util.List;
 public class ImageController {
 
     private ImageService imageService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public ImageController(ImageService imageService) {
+    public ImageController(ImageService imageService, JwtTokenProvider jwtTokenProvider) {
         this.imageService = imageService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file) throws IOException {
-        imageService.uploadImage(file);
-        return ResponseEntity.status(HttpStatus.OK).body("Upload");
+    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
+        var isValid = jwtTokenProvider.validToken(token);
+        if(isValid) {
+            imageService.uploadImage(file);
+            return ResponseEntity.status(HttpStatus.OK).body("Upload");
+        }
+        return ResponseEntity
+
     }
 
     @GetMapping("/download")

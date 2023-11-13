@@ -47,6 +47,7 @@ public class UserService {
 
     }
 
+
     private User findUserByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         return user.orElse(null);

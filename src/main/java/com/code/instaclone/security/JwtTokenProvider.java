@@ -2,6 +2,7 @@ package com.code.instaclone.security;
 
 
 import com.code.instaclone.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,16 @@ public class JwtTokenProvider {
                 .claim("username", username)
                 .signWith(key)
                 .compact();
+    }
+
+
+    public int getTokenId(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return (int) claims.get("id");
     }
 
     public boolean validate(String token) {

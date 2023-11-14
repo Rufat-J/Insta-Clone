@@ -41,11 +41,13 @@ public class ImageController {
         boolean isValid = jwtTokenProvider.validate(token);
         Optional<User> userOptional = userRepository.findByUsername(profile);
 
+        int userId = jwtTokenProvider.getTokenId(token);
+
         if (!isValid) {
             throw new InvalidTokenException("Access denied.");
         } else {
             if(userOptional.isPresent()) {
-                return ResponseEntity.ok(imageService.validateImageSize(file));
+                return ResponseEntity.ok(imageService.validateImageSize(file, userId));
             } else {
                 throw new Error("User not found");
             }

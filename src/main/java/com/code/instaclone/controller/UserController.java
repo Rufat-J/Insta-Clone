@@ -1,6 +1,7 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.dto.LoginSuccess;
+import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.model.User;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.UserService;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO){
         return userService.register(userDTO.username(), userDTO.password());
     }
 

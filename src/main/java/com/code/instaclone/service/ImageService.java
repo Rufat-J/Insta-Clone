@@ -5,7 +5,9 @@ import com.code.instaclone.exception.ImageSizeTooLargeException;
 import com.code.instaclone.exception.InvalidLoginException;
 import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
+import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.repository.ImageRepository;
+import com.code.instaclone.repository.ProfilePageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -24,14 +26,16 @@ public class ImageService {
     ImageRepository imageRepository;
     JwtTokenProvider jwtTokenProvider;
 
+    ProfilePageRepository profilePageRepository;
 
 
-    public ImageService(ImageRepository imageRepository, JwtTokenProvider jwtTokenProvider) {
+    public ImageService(ImageRepository imageRepository, JwtTokenProvider jwtTokenProvider, ProfilePageRepository profilePageRepository) {
         this.imageRepository = imageRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.profilePageRepository = profilePageRepository;
     }
 
-    public void uploadImage(MultipartFile file) {
+    public void uploadImage(MultipartFile file, int id) {
         byte[] imageData;
         try {
         imageData = file.getBytes(); }
@@ -40,9 +44,11 @@ public class ImageService {
         }
         long imageSize = file.getSize();
         Image image = new Image();
+
         image.setData(imageData);
         image.setName(file.getOriginalFilename());
         image.setSize(imageSize);
+
         imageRepository.save(image);
     }
 
@@ -59,12 +65,12 @@ public class ImageService {
         return imageRepository.findAll();
     }
 
-    public UploadSuccess validateImageSize(MultipartFile file) throws ImageSizeTooLargeException {
+    public UploadSuccess validateImageSize(MultipartFile file, int id) throws ImageSizeTooLargeException {
         long imageSize = file.getSize();
         long maxSize = 2 * 1024 * 1024; // 2mb
 
         if (imageSize <= maxSize) {
-            uploadImage(file);
+            uploadImage(file, id);
             return new UploadSuccess("Upload successful");
         } else {
             throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");

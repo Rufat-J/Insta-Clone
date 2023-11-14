@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Table(name = "users", schema = "public")
 @Entity
@@ -29,4 +35,11 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
+public Map<String, Object> toJson() {
+    Map<String, Object> resultAsJson = new LinkedHashMap<>();
+    resultAsJson.put("user_id", this.id);
+    resultAsJson.put("username", this.username);
+   return resultAsJson;
+}
 }

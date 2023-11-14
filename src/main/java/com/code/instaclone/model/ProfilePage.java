@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -32,4 +35,19 @@ public class ProfilePage {
     public ProfilePage(String description) {
         this.description = description;
     }
+
+    public ProfilePage(User user) {
+        this.user = user;
+        this.description = "This is my profile page";
+    }
+
+    public Map<String, Object> toJson() {
+        Map<String, Object> resultAsJson = new LinkedHashMap<>();
+        resultAsJson.put("profile_page_id", this.profilePageId);
+        resultAsJson.put("description", this.description);
+        resultAsJson.put("user", this.user.toJson());
+        resultAsJson.put("images", this.images);
+        return resultAsJson;
+    }
+
 }

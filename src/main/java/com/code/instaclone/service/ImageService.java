@@ -1,6 +1,6 @@
 package com.code.instaclone.service;
 
-import com.code.instaclone.dto.DeletedImageDto;
+import com.code.instaclone.dto.DeleteSuccess;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.ImageDoesNotExistException;
 import com.code.instaclone.exception.ImageSizeTooLargeException;
@@ -11,9 +11,6 @@ import com.code.instaclone.repository.ProfilePageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,31 +63,17 @@ public class ImageService {
     }
 
     @Transactional
-    public DeletedImageDto deleteImage(int userId, int imageId) {
-
-        // hitta profile page
+    public DeleteSuccess deleteImage(int userId, int imageId) {
         ProfilePage profilePage = findProfilePage(userId);
         int profilePageId = profilePage.getProfilePageId();
 
-        //hitta img på profilepage
         if (imageRepository.isImageBelongingToProfilePage(profilePageId, imageId)) {
-            Image image = findImage(imageId);
+            String imageName = findNameByImageId(imageId);
             imageRepository.deleteById(imageId);
 
-            byte[] imageData = image.getData();
-            ByteArrayResource resource = new ByteArrayResource(imageData);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            headers.setContentLength(imageData.length);
-            headers.setContentDispositionFormData("attachment", image.getName());
-
-            return new DeletedImageDto(headers, resource);
-
-
-        } else {
-            throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
+            return new DeleteSuccess("Image with Id {" + imageId + "} and image name {" + imageName + "} has been deleted");
         }
+        else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
     }
 
     private ProfilePage findProfilePage(int userId) {
@@ -98,9 +81,9 @@ public class ImageService {
         return profilePage.orElse(null);
     }
 
-    @Transactional
-    private Image findImage(int imageId) {
-        Optional<Image> image = imageRepository.findByImageId(imageId);
-        return image.orElse(null);
+    public String findNameByImageId(int imageId) {
+        Optional<String> name = imageRepository.findNameByImageId(imageId);
+        return name.orElse(null);
     }
+
 }

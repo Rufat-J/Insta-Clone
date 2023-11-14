@@ -16,4 +16,7 @@ public interface ImageRepository extends JpaRepository<Image, Integer> {
 
     @Query(value = "SELECT * FROM images i WHERE i.image_id = :imageId", nativeQuery = true)
     Optional<Image> findByImageId(int imageId);
+
+    @Query(value = "SELECT name FROM images i WHERE i.image_id = :imageId", nativeQuery = true)
+    Optional<String> findNameByImageId(int imageId);
 }

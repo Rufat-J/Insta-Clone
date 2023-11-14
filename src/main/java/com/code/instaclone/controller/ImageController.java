@@ -1,6 +1,6 @@
 package com.code.instaclone.controller;
 
-import com.code.instaclone.dto.DeletedImageDto;
+import com.code.instaclone.dto.DeleteSuccess;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
@@ -46,13 +46,13 @@ public class ImageController {
     }
 
     @DeleteMapping("/delete/{imageId}")
-    public ResponseEntity<ByteArrayResource> deleteImage(@PathVariable int imageId, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<DeleteSuccess> deleteImage(@PathVariable int imageId, @RequestHeader("Authorization") String token) {
         boolean isValid = jwtTokenProvider.validate(token);
         if (isValid) {
             int userId = jwtTokenProvider.getTokenId(token);
-            DeletedImageDto dto = imageService.deleteImage(userId, imageId);
+            DeleteSuccess result = imageService.deleteImage(userId, imageId);
 
-            return ResponseEntity.ok().headers(dto.headers()).body(dto.resource());
+            return ResponseEntity.ok(result);
         } else {
             throw new InvalidTokenException("Access denied.");
         }

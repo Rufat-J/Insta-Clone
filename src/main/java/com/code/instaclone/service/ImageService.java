@@ -42,7 +42,7 @@ public class ImageService {
     public UploadSuccess validateTokenForImage(String token, MultipartFile file) throws IOException {
         var isValid = jwtTokenProvider.validToken(token);
         long imageSize = file.getSize();
-        long maxSize = 2 * 1024 * 10240;
+        long maxSize = 2 * 1024 * 1024; // 2mb
 
         if (isValid & imageSize <= maxSize) {
             uploadImage(file);

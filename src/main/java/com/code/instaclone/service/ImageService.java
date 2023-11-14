@@ -31,7 +31,7 @@ public class ImageService {
         try {
         imageData = file.getBytes(); }
         catch (Exception e) {
-            throw new RuntimeException("Faild to convert image to bytes");
+            throw new RuntimeException("Failed to convert image to bytes");
         }
         long imageSize = file.getSize();
         Image image = new Image();

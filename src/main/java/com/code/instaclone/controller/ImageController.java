@@ -1,12 +1,11 @@
 package com.code.instaclone.controller;
 
-import com.code.instaclone.exception.InvalidLoginException;
+import com.code.instaclone.dto.UploadSuccess;
+import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ImageService;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,8 +28,13 @@ public class ImageController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
-        return ResponseEntity.ok(imageService.validateTokenForImage(token, file));
+    public ResponseEntity<UploadSuccess> uploadImage(@RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
+        boolean isValid = jwtTokenProvider.validate(token);
+        if (isValid) {
+            return ResponseEntity.ok(imageService.validateImageSize(file));
+        } else {
+            throw new InvalidTokenException("Access denied.");
+        }
     }
 
     @GetMapping("/download")

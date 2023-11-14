@@ -19,40 +19,41 @@ public class ImageService {
     ImageRepository imageRepository;
     JwtTokenProvider jwtTokenProvider;
 
+
+
     public ImageService(ImageRepository imageRepository, JwtTokenProvider jwtTokenProvider) {
         this.imageRepository = imageRepository;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ImageSizeTooLargeException uploadImage(MultipartFile file) throws IOException {
-        byte[] imageData = file.getBytes();
+    public void uploadImage(MultipartFile file) {
+        byte[] imageData;
+        try {
+        imageData = file.getBytes(); }
+        catch (Exception e) {
+            throw new RuntimeException("Faild to convert image to bytes");
+        }
         long imageSize = file.getSize();
         Image image = new Image();
         image.setData(imageData);
         image.setName(file.getOriginalFilename());
         image.setSize(imageSize);
         imageRepository.save(image);
-        return null;
     }
 
     public List<Image> getAllImages() {
         return imageRepository.findAll();
     }
 
-    public UploadSuccess validateTokenForImage(String token, MultipartFile file) throws IOException {
-        var isValid = jwtTokenProvider.validToken(token);
+    public UploadSuccess validateImageSize(MultipartFile file) throws ImageSizeTooLargeException {
         long imageSize = file.getSize();
         long maxSize = 2 * 1024 * 1024; // 2mb
 
-        if (isValid & imageSize <= maxSize) {
+        if (imageSize <= maxSize) {
             uploadImage(file);
             return new UploadSuccess("Upload successful");
-        } else if (!isValid) {
-            throw new InvalidTokenException("Access denied.");
-
-        } else if (imageSize > maxSize) {
+        } else {
             throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
         }
-        return null;
     }
 }

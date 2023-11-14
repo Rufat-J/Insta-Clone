@@ -7,6 +7,11 @@ import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +46,15 @@ public class ImageService {
         imageRepository.save(image);
     }
 
+    public ResponseEntity<Resource> downloadImage(Image image) {
+        ByteArrayResource resource = new ByteArrayResource(image.getData());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + image.getName())
+                .contentType(MediaType.parseMediaType("image/jpeg"))
+                .contentLength(image.getSize())
+                .body(resource);
+    }
+
     public List<Image> getAllImages() {
         return imageRepository.findAll();
     }
@@ -55,5 +69,9 @@ public class ImageService {
         } else {
             throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
         }
+    }
+
+    public Image getImageById(int id) {
+        return imageRepository.findById(id).orElse(null);
     }
 }

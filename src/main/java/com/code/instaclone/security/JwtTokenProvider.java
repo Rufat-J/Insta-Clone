@@ -14,7 +14,7 @@ import java.security.Key;
 @NoArgsConstructor
 public class JwtTokenProvider {
 
-    private final String secret = "testwerwerwerwerwererwwerwerwerwetgwegwegwegwerwerwerwerwerwerwerwerw234234234wefr2342f234";
+    private final String secret = "keyboardcat-testwerwerwerwerwererwwerwerwerwetgwegwegwegwerwerwerwerwerwerwerwerw234234234wefr2342f234";
 
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
@@ -47,8 +47,10 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
+
+
 }

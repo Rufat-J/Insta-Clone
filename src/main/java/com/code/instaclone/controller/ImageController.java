@@ -1,5 +1,6 @@
 package com.code.instaclone.controller;
 
+import com.code.instaclone.dto.DeleteSuccess;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
@@ -13,6 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +37,7 @@ public class ImageController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
     }
+
 
     @PostMapping("/upload")
     public ResponseEntity<UploadSuccess> uploadImage(@PathVariable String profile, @RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
@@ -68,4 +71,17 @@ public class ImageController {
             throw new InvalidTokenException("Access denied.");
         }
     }
+    @DeleteMapping("/delete/{imageId}")
+    public ResponseEntity<DeleteSuccess> deleteImage(@PathVariable int imageId, @RequestHeader("Authorization") String token) {
+        boolean isValid = jwtTokenProvider.validate(token);
+        if (isValid) {
+            int userId = jwtTokenProvider.getTokenId(token);
+            DeleteSuccess result = imageService.deleteImage(userId, imageId);
+
+            return ResponseEntity.ok(result);
+        } else {
+            throw new InvalidTokenException("Access denied.");
+        }
+    }
+
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.UUID;
 
 @Component
 @NoArgsConstructor
@@ -30,7 +29,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public boolean validToken(String token) {
+    public boolean validate(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)

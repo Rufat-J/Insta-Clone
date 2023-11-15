@@ -65,4 +65,11 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public ProfilePage searchUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        int userId = user.get().getId();
+        Optional<ProfilePage> profilePage = profilePageRepository.getUserProfileInfo(userId);
+        //System.out.println("username: " + username + " userId " + userId);
+        return profilePage.orElse(null);
+    }
 }

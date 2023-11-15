@@ -24,6 +24,7 @@ public class Image {
     private String name;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name="data", nullable = false)
     private byte[] data;
 

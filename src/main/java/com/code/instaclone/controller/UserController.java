@@ -1,15 +1,15 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.dto.LoginSuccess;
+import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.ProfilePage;
-import com.code.instaclone.model.User;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.UserService;
-import com.sun.net.httpserver.Authenticator;
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -33,6 +33,19 @@ public class UserController {
     public ResponseEntity<LoginSuccess> login(@RequestBody UserDTO user) {
         var result = userService.login(user.username(), user.password());
         return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/search/{username}")
+    public ResponseEntity<Map<String, Object>> searchProfile(@PathVariable String username, @RequestHeader("Authorization") String token) {
+        boolean isValid = jwtTokenProvider.validate(token);
+
+        if (isValid) {
+            ProfilePage profilePage = userService.searchUser(username);
+            return ResponseEntity.ok(profilePage.toJson());
+
+        } else {
+            throw new InvalidTokenException("Access denied.");
+        }
     }
 
 

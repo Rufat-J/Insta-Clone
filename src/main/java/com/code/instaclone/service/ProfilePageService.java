@@ -12,6 +12,7 @@ import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.model.User;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.repository.ProfilePageRepository;
+import com.code.instaclone.repository.UserRepository;
 import com.code.instaclone.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,15 @@ public class ProfilePageService {
         Optional<ProfilePage> profilePage = profilePageRepository.findByUserId(userId);
         return profilePage.orElse(null);
     }
+
+    /*
+
+    public Object searchProfile(String username, int userId) {
+        int userId = profilePageRepository.findUserIdByUsername(username);
+        Optional<ProfilePage> profilePage = UserRepository.findByUsername(username);
+        return profilePage.orElse(null);
+    }
+
+     */
 
 }

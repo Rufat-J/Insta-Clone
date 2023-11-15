@@ -1,6 +1,7 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.dto.LoginSuccess;
+import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.model.User;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.UserService;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -22,11 +22,10 @@ public class UserController {
     public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
-
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO){
         return userService.register(userDTO.username(), userDTO.password());
     }
 

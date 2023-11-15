@@ -1,6 +1,7 @@
 package com.code.instaclone.service;
 
 import com.code.instaclone.dto.DeleteSuccess;
+import com.code.instaclone.dto.DownloadImageData;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.ImageDoesNotExistException;
 import com.code.instaclone.exception.ImageSizeTooLargeException;
@@ -9,6 +10,11 @@ import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.repository.ProfilePageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +37,7 @@ public class ImageService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void uploadImage(MultipartFile file) {
+    public void uploadImage(MultipartFile file, int id) {
         byte[] imageData;
         try {
             imageData = file.getBytes();
@@ -40,22 +46,40 @@ public class ImageService {
         }
         long imageSize = file.getSize();
         Image image = new Image();
+
         image.setData(imageData);
         image.setName(file.getOriginalFilename());
         image.setSize(imageSize);
+
         imageRepository.save(image);
     }
+
+    public DownloadImageData downloadImage(int imageId, int userId) {
+        ProfilePage profilePage = findProfilePage(userId);
+        int profilePageId = profilePage.getProfilePageId();
+        Image image;
+
+        if (imageRepository.isImageBelongingToProfilePage(profilePageId, imageId)) {
+            image = getImageById(imageId);
+            ByteArrayResource resource = new ByteArrayResource(image.getData());
+
+            return new DownloadImageData(resource, image);
+        }
+        else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
+    }
+
+
 
     public List<Image> getAllImages() {
         return imageRepository.findAll();
     }
 
-    public UploadSuccess validateImageSize(MultipartFile file) throws ImageSizeTooLargeException {
+    public UploadSuccess validateImageSize(MultipartFile file, int id) throws ImageSizeTooLargeException {
         long imageSize = file.getSize();
         long maxSize = 2 * 1024 * 1024; // 2mb
 
         if (imageSize <= maxSize) {
-            uploadImage(file);
+            uploadImage(file, id);
             return new UploadSuccess("Upload successful");
         } else {
             throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
@@ -76,6 +100,7 @@ public class ImageService {
         else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
     }
 
+
     private ProfilePage findProfilePage(int userId) {
         Optional<ProfilePage> profilePage = profilePageRepository.findByUserId(userId);
         return profilePage.orElse(null);
@@ -86,4 +111,8 @@ public class ImageService {
         return name.orElse(null);
     }
 
+
+    public Image getImageById(int id) {
+        return imageRepository.findById(id).orElse(null);
+    }
 }

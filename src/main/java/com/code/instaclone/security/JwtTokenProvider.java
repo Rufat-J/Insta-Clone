@@ -30,6 +30,16 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
+    public int getTokenId(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return (int) claims.get("id");
+    }
+
     public boolean validate(String token) {
         try {
             Jwts.parserBuilder()
@@ -42,13 +52,5 @@ public class JwtTokenProvider {
         }
     }
 
-    public int getTokenId(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return (int) claims.get("id");
-    }
 
 }

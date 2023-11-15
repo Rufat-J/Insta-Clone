@@ -1,6 +1,7 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.dto.DeleteSuccess;
+import com.code.instaclone.dto.DownloadImageData;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.model.Image;
@@ -8,7 +9,6 @@ import com.code.instaclone.model.User;
 import com.code.instaclone.repository.UserRepository;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ImageService;
-import com.code.instaclone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/{profile}/image")
+@RequestMapping("/image")
 public class ImageController {
 
     private ImageService imageService;
@@ -57,16 +56,21 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/{imageId}/download")
+    @GetMapping("/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable int imageId , @RequestHeader("Authorization") String token){
         boolean isValid = jwtTokenProvider.validate(token);
         if (isValid) {
-            Image image = imageService.getImageById(imageId);
-            if (image != null) {
-             return imageService.downloadImage(image);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            int userId = jwtTokenProvider.getTokenId(token);
+            DownloadImageData result = imageService.downloadImage(imageId, userId);
+            Image image = result.getImage();
+            Resource resource = result.getResource();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + image.getName())
+                    .contentType(MediaType.parseMediaType("image/jpeg"))
+                    .contentLength(image.getSize())
+                    .body(resource);
+
         } else {
             throw new InvalidTokenException("Access denied.");
         }

@@ -1,6 +1,7 @@
 package com.code.instaclone.service;
 
 import com.code.instaclone.dto.DeleteSuccess;
+import com.code.instaclone.dto.DownloadImageData;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.ImageDoesNotExistException;
 import com.code.instaclone.exception.ImageSizeTooLargeException;
@@ -53,14 +54,21 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    public ResponseEntity<Resource> downloadImage(Image image) {
-        ByteArrayResource resource = new ByteArrayResource(image.getData());
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + image.getName())
-                .contentType(MediaType.parseMediaType("image/jpeg"))
-                .contentLength(image.getSize())
-                .body(resource);
+    public DownloadImageData downloadImage(int imageId, int userId) {
+        ProfilePage profilePage = findProfilePage(userId);
+        int profilePageId = profilePage.getProfilePageId();
+        Image image;
+
+        if (imageRepository.isImageBelongingToProfilePage(profilePageId, imageId)) {
+            image = getImageById(imageId);
+            ByteArrayResource resource = new ByteArrayResource(image.getData());
+
+            return new DownloadImageData(resource, image);
+        }
+        else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
     }
+
+
 
     public List<Image> getAllImages() {
         return imageRepository.findAll();
@@ -91,6 +99,7 @@ public class ImageService {
         }
         else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
     }
+
 
     private ProfilePage findProfilePage(int userId) {
         Optional<ProfilePage> profilePage = profilePageRepository.findByUserId(userId);

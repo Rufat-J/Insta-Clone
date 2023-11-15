@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface ProfilePageRepository extends JpaRepository<ProfilePage, Integer> {
     @Query(value = "SELECT * FROM profile_pages p WHERE p.user_id = :userId", nativeQuery = true)
     Optional<ProfilePage> findByUserId(int userId);
+
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true else false END FROM profile_pages p " +
+            "WHERE p.user_id = :userId", nativeQuery = true)
+    boolean isProfilePageBelongingToUser(int userId);
 }

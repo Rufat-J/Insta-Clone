@@ -37,7 +37,6 @@ public class ImageController {
         this.userRepository = userRepository;
     }
 
-
     @PostMapping("/upload")
     public ResponseEntity<UploadSuccess> uploadImage(@PathVariable String profile, @RequestParam("image")MultipartFile file, @RequestHeader("Authorization") String token) throws IOException {
         boolean isValid = jwtTokenProvider.validate(token);

@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 
 @Component
@@ -30,14 +29,21 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     public int getTokenId(String token) {
+        return getTokenClaim(token, "id", Integer.class);
+    }
+
+    public String getTokenUsername(String token) {
+        return getTokenClaim(token, "username", String.class);
+    }
+
+    public <T> T getTokenClaim(String token, String type, Class<T> returnType) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return (int) claims.get("id");
+        return claims.get(type, returnType);
     }
 
     public boolean validate(String token) {
@@ -51,6 +57,4 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
-
 }

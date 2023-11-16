@@ -25,4 +25,6 @@ public interface ProfilePageRepository extends JpaRepository<ProfilePage, Intege
             "WHERE u.id = :userId")
     Optional<ProfilePage> getUserProfileInfo(@Param("userId") int userId);
 
+    @Query(value = "SELECT id FROM profile_pages p WHERE p.user_id = :userId", nativeQuery = true)
+    Optional<Integer> findProfilePageIdByUserId(int userId);
 }

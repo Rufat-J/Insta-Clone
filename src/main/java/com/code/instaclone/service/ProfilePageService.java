@@ -12,6 +12,7 @@ import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.model.User;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.repository.ProfilePageRepository;
+import com.code.instaclone.repository.UserRepository;
 import com.code.instaclone.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,12 @@ import java.util.Optional;
 public class ProfilePageService {
 
     ProfilePageRepository profilePageRepository;
+    UserRepository userRepository;
 
-    public ProfilePageService(ProfilePageRepository profilePageRepository) {
+    @Autowired
+    public ProfilePageService(ProfilePageRepository profilePageRepository, UserRepository userRepository ) {
         this.profilePageRepository = profilePageRepository;
+        this.userRepository = userRepository;
     }
 
     public EditSuccess editProfileDescription(int userId, String newDescription) {
@@ -47,6 +51,14 @@ public class ProfilePageService {
 
     private ProfilePage findByUserId(int userId) {
         Optional<ProfilePage> profilePage = profilePageRepository.findByUserId(userId);
+        return profilePage.orElse(null);
+    }
+
+    @Transactional
+    public ProfilePage getProfilePage(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        int userId = user.get().getId();
+        Optional<ProfilePage> profilePage = profilePageRepository.getUserProfileInfo(userId);
         return profilePage.orElse(null);
     }
 

@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -46,8 +43,16 @@ public class ProfilePage {
         resultAsJson.put("profile_page_id", this.profilePageId);
         resultAsJson.put("description", this.description);
         resultAsJson.put("user", this.user.toJson());
-        resultAsJson.put("images", this.images);
+        resultAsJson.put("images", getImagesAsJson());
         return resultAsJson;
+    }
+
+    private List<Map<String, Object>> getImagesAsJson() {
+        List<Map<String, Object>> imagesAsJson = new ArrayList<>();
+        for (Image image : this.images) {
+            imagesAsJson.add(image.toJson());
+        }
+        return imagesAsJson;
     }
 
 }

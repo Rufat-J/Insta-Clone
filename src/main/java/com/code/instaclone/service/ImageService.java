@@ -56,16 +56,14 @@ public class ImageService {
 
     public DownloadImageData downloadImage(int imageId, int userId) {
         ProfilePage profilePage = findProfilePage(userId);
-        int profilePageId = profilePage.getProfilePageId();
-        Image image;
+        Image image = getImageById(imageId);
 
-        if (imageRepository.isImageBelongingToProfilePage(profilePageId, imageId)) {
-            image = getImageById(imageId);
+        if (image != null) {
             ByteArrayResource resource = new ByteArrayResource(image.getData());
 
             return new DownloadImageData(resource, image);
         }
-        else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist on user profile page");
+        else throw new ImageDoesNotExistException("Image with id {" + imageId + "} does not exist");
     }
 
 

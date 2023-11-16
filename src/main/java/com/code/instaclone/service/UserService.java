@@ -7,6 +7,7 @@ import com.code.instaclone.model.User;
 import com.code.instaclone.repository.ProfilePageRepository;
 import com.code.instaclone.repository.UserRepository;
 import com.code.instaclone.security.JwtTokenProvider;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,4 @@ public class UserService {
         Optional<User> user = userRepository.findByUsername(username);
         return user.orElse(null);
     }
-
 }

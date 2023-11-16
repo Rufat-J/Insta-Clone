@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,6 +24,4 @@ public interface ProfilePageRepository extends JpaRepository<ProfilePage, Intege
             "WHERE u.id = :userId")
     Optional<ProfilePage> getUserProfileInfo(@Param("userId") int userId);
 
-    @Query(value = "SELECT id FROM profile_pages p WHERE p.user_id = :userId", nativeQuery = true)
-    Optional<Integer> findProfilePageIdByUserId(int userId);
 }

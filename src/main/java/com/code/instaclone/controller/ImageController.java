@@ -37,7 +37,7 @@ public class ImageController {
 
         if (isValid) {
             int userId = jwtTokenProvider.getTokenId(token);
-            return ResponseEntity.ok(imageService.validateImageSize(file, userId));
+            return ResponseEntity.ok(imageService.uploadImage(file, userId));
         } else {
             throw new InvalidTokenException("Access denied.");
         }

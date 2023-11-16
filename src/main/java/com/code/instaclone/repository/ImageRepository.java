@@ -14,9 +14,6 @@ public interface ImageRepository extends JpaRepository<Image, Integer> {
             "WHERE i.profile_page_id = :profilePageId AND i.image_id = :imageId", nativeQuery = true)
     boolean isImageBelongingToProfilePage(int profilePageId, int imageId);
 
-    @Query(value = "SELECT * FROM images i WHERE i.image_id = :imageId", nativeQuery = true)
-    Optional<Image> findByImageId(int imageId);
-
     @Query(value = "SELECT name FROM images i WHERE i.image_id = :imageId", nativeQuery = true)
     Optional<String> findNameByImageId(int imageId);
 }

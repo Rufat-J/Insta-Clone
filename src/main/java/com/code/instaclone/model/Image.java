@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,9 +22,6 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "description")
-    private String description;
-
     @Column(name = "name")
     private String name;
 
@@ -35,6 +35,13 @@ public class Image {
     @ManyToOne
     @JoinColumn(name = "profile_page_id")
     private ProfilePage profilePage;
+
+    public Image(MultipartFile file, ProfilePage profilePage) throws IOException {
+        this.name = file.getOriginalFilename();
+        this.data = file.getBytes();
+        this.size = file.getSize();
+        this.profilePage = profilePage;
+    }
 
     public Map<String, Object> toJson() {
         Map<String, Object> result = new LinkedHashMap<>();

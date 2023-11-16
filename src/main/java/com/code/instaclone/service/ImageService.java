@@ -4,6 +4,7 @@ import com.code.instaclone.dto.DeleteSuccess;
 import com.code.instaclone.dto.DownloadImageData;
 import com.code.instaclone.dto.UploadSuccess;
 import com.code.instaclone.exception.ByteConversionException;
+import com.code.instaclone.exception.FailedImageUploadException;
 import com.code.instaclone.exception.ImageDoesNotExistException;
 import com.code.instaclone.exception.ImageSizeTooLargeException;
 import com.code.instaclone.model.Image;
@@ -11,9 +12,9 @@ import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.repository.ImageRepository;
 import com.code.instaclone.repository.ProfilePageRepository;
 import com.code.instaclone.security.JwtTokenProvider;
-import org.springframework.core.io.ByteArrayResource;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,21 +34,26 @@ public class ImageService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void uploadImage(MultipartFile file, int userId) throws ByteConversionException {
-        byte[] imageData;
+    public UploadSuccess uploadImage(MultipartFile file, int userId)
+            throws ImageSizeTooLargeException, ByteConversionException, FailedImageUploadException {
         try {
-            imageData = file.getBytes();
+            if (isValidImageSize(file)) {
+                Image image;
+                try {
+                    ProfilePage profilePage = findProfilePage(userId);
+                    image = new Image(file, profilePage);
+                } catch (Exception e) {
+                    throw new ByteConversionException("Failed to convert image to bytes");
+                }
+                imageRepository.save(image);
+
+                return new UploadSuccess("Uploaded successfully");
+            } else {
+                throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
+            }
         } catch (Exception e) {
-            throw new ByteConversionException("Failed to convert image to bytes");
+            throw new FailedImageUploadException("Could not upload image: " + e.getMessage());
         }
-        long imageSize = file.getSize();
-        Image image = new Image();
-
-        image.setData(imageData);
-        image.setName(file.getOriginalFilename());
-        image.setSize(imageSize);
-
-        imageRepository.save(image);
     }
 
     public DownloadImageData downloadImage(int imageId) throws ImageDoesNotExistException {
@@ -63,16 +69,11 @@ public class ImageService {
         }
     }
 
-    public UploadSuccess validateImageSize(MultipartFile file, int userId) throws ImageSizeTooLargeException {
+    public boolean isValidImageSize(MultipartFile file) throws ImageSizeTooLargeException {
         long imageSize = file.getSize();
         long maxSize = 2 * 1024 * 1024; // 2mb
 
-        if (imageSize <= maxSize) {
-            uploadImage(file, userId);
-            return new UploadSuccess("Upload successful");
-        } else {
-            throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
-        }
+        return imageSize <= maxSize;
     }
 
     @Transactional
@@ -94,12 +95,6 @@ public class ImageService {
         Optional<ProfilePage> profilePage = profilePageRepository.findByUserId(userId);
         return profilePage.orElse(null);
     }
-
-    private int findProfilePageId(int userId) {
-        Optional<Integer> requestedId = profilePageRepository.findProfilePageIdByUserId(userId);
-        return requestedId.orElse(-1);
-    }
-
 
     public String findNameByImageId(int imageId) {
         Optional<String> name = imageRepository.findNameByImageId(imageId);

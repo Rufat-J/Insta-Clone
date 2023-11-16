@@ -27,9 +27,12 @@ import java.util.Optional;
 public class ProfilePageService {
 
     ProfilePageRepository profilePageRepository;
+    UserRepository userRepository;
 
-    public ProfilePageService(ProfilePageRepository profilePageRepository) {
+    @Autowired
+    public ProfilePageService(ProfilePageRepository profilePageRepository, UserRepository userRepository ) {
         this.profilePageRepository = profilePageRepository;
+        this.userRepository = userRepository;
     }
 
     public EditSuccess editProfileDescription(int userId, String newDescription) {
@@ -51,14 +54,12 @@ public class ProfilePageService {
         return profilePage.orElse(null);
     }
 
-    /*
-
-    public Object searchProfile(String username, int userId) {
-        int userId = profilePageRepository.findUserIdByUsername(username);
-        Optional<ProfilePage> profilePage = UserRepository.findByUsername(username);
+    @Transactional
+    public ProfilePage getProfilePage(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        int userId = user.get().getId();
+        Optional<ProfilePage> profilePage = profilePageRepository.getUserProfileInfo(userId);
         return profilePage.orElse(null);
     }
-
-     */
 
 }

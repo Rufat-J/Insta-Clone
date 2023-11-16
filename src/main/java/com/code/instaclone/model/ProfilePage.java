@@ -47,10 +47,10 @@ public class ProfilePage {
         return resultAsJson;
     }
 
-    private List<String> getImagesAsJson() {
-        List<String> imagesAsJson = new ArrayList<>();
+    private List<Map<String, Object>> getImagesAsJson() {
+        List<Map<String, Object>> imagesAsJson = new ArrayList<>();
         for (Image image : this.images) {
-            imagesAsJson.add(image.toJson().toString());
+            imagesAsJson.add(image.toJson());
         }
         return imagesAsJson;
     }

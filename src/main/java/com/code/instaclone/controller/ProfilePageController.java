@@ -65,7 +65,7 @@ public class ProfilePageController {
         boolean isValid = jwtTokenProvider.validate(token);
 
         if (isValid) {
-            ProfilePage profilePage = userService.searchUser(username);
+            ProfilePage profilePage = profilePageService.getProfilePage(username);
             return ResponseEntity.ok(profilePage.toJson());
 
         } else {

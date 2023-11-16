@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Getter
 @Setter
 @Entity
@@ -41,5 +44,13 @@ public class Image {
         this.data = data;
         this.size = size;
         this.profilePage = profilePage;
+    }
+
+    public Map<String, Object> toJson() {
+        Map<String, Object> resultAsJson = new LinkedHashMap<>();
+        resultAsJson.put("image_id", this.id);
+        resultAsJson.put("filename", this.name);
+        resultAsJson.put("href", "http://localhost:8080/image/download/" + this.id);
+        return resultAsJson;
     }
 }

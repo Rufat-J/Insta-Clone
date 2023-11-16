@@ -35,18 +35,4 @@ public class UserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/search/{username}")
-    public ResponseEntity<Map<String, Object>> searchProfile(@PathVariable String username, @RequestHeader("Authorization") String token) {
-        boolean isValid = jwtTokenProvider.validate(token);
-
-        if (isValid) {
-            ProfilePage profilePage = userService.searchUser(username);
-            return ResponseEntity.ok(profilePage.toJson());
-
-        } else {
-            throw new InvalidTokenException("Access denied.");
-        }
-    }
-
-
 }

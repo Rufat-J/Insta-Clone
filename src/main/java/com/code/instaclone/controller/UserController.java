@@ -1,32 +1,29 @@
 package com.code.instaclone.controller;
 
 import com.code.instaclone.dto.LoginSuccess;
-import com.code.instaclone.exception.InvalidTokenException;
-import com.code.instaclone.model.ProfilePage;
-import com.code.instaclone.security.JwtTokenProvider;
+import com.code.instaclone.dto.RegisterSuccess;
 import com.code.instaclone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
 
     private final UserService userService;
     private record UserDTO(String username, String password){};
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO){
-        return userService.register(userDTO.username(), userDTO.password());
+    public ResponseEntity<RegisterSuccess> registerUser(@RequestBody UserDTO userDTO){
+        var result = userService.register(userDTO.username(), userDTO.password());
+        return ResponseEntity.ok().body(result);
     }
 
     @PostMapping("/login")

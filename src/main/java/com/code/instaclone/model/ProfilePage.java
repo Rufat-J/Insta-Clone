@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.*;
 
 @Getter
@@ -29,30 +28,26 @@ public class ProfilePage {
     @OneToMany(mappedBy = "profilePage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
-    public ProfilePage(String description) {
-        this.description = description;
-    }
-
     public ProfilePage(User user) {
         this.user = user;
         this.description = "This is my profile page";
     }
 
     public Map<String, Object> toJson() {
-        Map<String, Object> resultAsJson = new LinkedHashMap<>();
-        resultAsJson.put("profile_page_id", this.profilePageId);
-        resultAsJson.put("description", this.description);
-        resultAsJson.put("user", this.user.toJson());
-        resultAsJson.put("images", getImagesAsJson());
-        return resultAsJson;
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("profile_page_id", this.profilePageId);
+        result.put("description", this.description);
+        result.put("user", this.user.toJson());
+        result.put("images", getImagesAsJson());
+        return result;
     }
 
     private List<Map<String, Object>> getImagesAsJson() {
-        List<Map<String, Object>> imagesAsJson = new ArrayList<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         for (Image image : this.images) {
-            imagesAsJson.add(image.toJson());
+            result.add(image.toJson());
         }
-        return imagesAsJson;
+        return result;
     }
 
 }

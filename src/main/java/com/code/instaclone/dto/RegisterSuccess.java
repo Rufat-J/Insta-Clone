@@ -3,9 +3,9 @@ package com.code.instaclone.dto;
 import lombok.Getter;
 
 @Getter
-public class EditSuccess extends Success {
+public class RegisterSuccess extends Success {
 
-    public EditSuccess(String message) {
+    public RegisterSuccess(String message) {
         super(message);
     }
 }

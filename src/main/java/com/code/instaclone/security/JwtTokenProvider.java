@@ -1,6 +1,5 @@
 package com.code.instaclone.security;
 
-
 import com.code.instaclone.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +14,6 @@ import java.security.Key;
 public class JwtTokenProvider {
 
     private final String secret = "keyboardcat-testwerwerwerwerwererwwerwerwerwetgwegwegwegwerwerwerwerwerwerwerwerw234234234wefr2342f234";
-
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
     public String generateToken(User user) {
@@ -30,14 +28,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     public int getTokenId(String token) {
+        return getTokenClaim(token, "id", Integer.class);
+    }
+
+    public <T> T getTokenClaim(String token, String type, Class<T> returnType) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return (int) claims.get("id");
+        return claims.get(type, returnType);
     }
 
     public boolean validate(String token) {
@@ -51,6 +52,4 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
-
 }

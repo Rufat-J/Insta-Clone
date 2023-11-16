@@ -1,6 +1,10 @@
-Create application.properties file.
-Add a connection string.
 
-spring.datasource.url=
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
+## How to run locally
+
+- Download the project
+
+- Add the connection string to application.properties
+
+- Run InstaCloneApplication.java
+
+### Description

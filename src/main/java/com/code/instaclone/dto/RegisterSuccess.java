@@ -8,5 +8,4 @@ public class RegisterSuccess extends Success {
     public RegisterSuccess(String message) {
         super(message);
     }
-
 }

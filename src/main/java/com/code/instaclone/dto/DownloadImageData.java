@@ -19,10 +19,10 @@ public class DownloadImageData {
     }
 
     public ResponseEntity<Resource> toResponseEntity() {
-    return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + this.image.getName())
-            .contentType(MediaType.parseMediaType("image/jpeg"))
-            .contentLength(this.image.getSize())
-            .body(this.resource);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + this.image.getName())
+                .contentType(MediaType.parseMediaType("image/jpeg"))
+                .contentLength(this.image.getSize())
+                .body(this.resource);
     }
 }

@@ -1,6 +1,5 @@
 package com.code.instaclone.dto;
 
-
 import lombok.Getter;
 
 @Getter

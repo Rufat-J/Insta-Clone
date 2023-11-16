@@ -1,12 +1,12 @@
 package com.code.instaclone.security;
 
-
 import com.code.instaclone.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
+
 import java.security.Key;
 
 @Component
@@ -14,7 +14,6 @@ import java.security.Key;
 public class JwtTokenProvider {
 
     private final String secret = "keyboardcat-testwerwerwerwerwererwwerwerwerwetgwegwegwegwerwerwerwerwerwerwerwerw234234234wefr2342f234";
-
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
     public String generateToken(User user) {
@@ -31,10 +30,6 @@ public class JwtTokenProvider {
 
     public int getTokenId(String token) {
         return getTokenClaim(token, "id", Integer.class);
-    }
-
-    public String getTokenUsername(String token) {
-        return getTokenClaim(token, "username", String.class);
     }
 
     public <T> T getTokenClaim(String token, String type, Class<T> returnType) {

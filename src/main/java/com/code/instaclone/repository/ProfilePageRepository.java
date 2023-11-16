@@ -1,6 +1,5 @@
 package com.code.instaclone.repository;
 
-
 import com.code.instaclone.model.ProfilePage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

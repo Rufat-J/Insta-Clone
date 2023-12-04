@@ -3,8 +3,6 @@ package com.code.instaclone.controller;
 import com.code.instaclone.dto.DeleteSuccess;
 import com.code.instaclone.dto.DownloadImageData;
 import com.code.instaclone.dto.UploadSuccess;
-import com.code.instaclone.exception.ImageDoesNotExistException;
-import com.code.instaclone.exception.ImageSizeTooLargeException;
 import com.code.instaclone.exception.InvalidTokenException;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ImageService;
@@ -30,9 +28,7 @@ public class ImageController {
     @PostMapping("/upload")
     public ResponseEntity<UploadSuccess> uploadImage(
             @RequestHeader("Authorization") String token,
-            @RequestParam("image") MultipartFile file)
-            throws InvalidTokenException,
-            ImageSizeTooLargeException {
+            @RequestParam("image") MultipartFile file) {
         boolean isValid = jwtTokenProvider.validate(token);
 
         if (isValid) {
@@ -44,8 +40,7 @@ public class ImageController {
     }
 
     @GetMapping("/download/{imageId}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable int imageId, @RequestHeader("Authorization") String token)
-            throws InvalidTokenException, ImageDoesNotExistException {
+    public ResponseEntity<Resource> downloadImage(@PathVariable int imageId, @RequestHeader("Authorization") String token) {
         boolean isValid = jwtTokenProvider.validate(token);
 
         if (isValid) {
@@ -58,8 +53,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/delete/{imageId}")
-    public ResponseEntity<DeleteSuccess> deleteImage(@PathVariable int imageId, @RequestHeader("Authorization") String token)
-            throws InvalidTokenException, ImageDoesNotExistException {
+    public ResponseEntity<DeleteSuccess> deleteImage(@PathVariable int imageId, @RequestHeader("Authorization") String token) {
         boolean isValid = jwtTokenProvider.validate(token);
         if (isValid) {
             int userId = jwtTokenProvider.getTokenId(token);

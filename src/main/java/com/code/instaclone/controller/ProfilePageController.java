@@ -3,7 +3,6 @@ package com.code.instaclone.controller;
 import com.code.instaclone.dto.EditSuccess;
 import com.code.instaclone.dto.NewDescriptionDto;
 import com.code.instaclone.exception.InvalidTokenException;
-import com.code.instaclone.exception.UnauthorizedEditException;
 import com.code.instaclone.model.ProfilePage;
 import com.code.instaclone.security.JwtTokenProvider;
 import com.code.instaclone.service.ProfilePageService;
@@ -28,8 +27,7 @@ public class ProfilePageController {
     }
 
     @PutMapping("/edit/description")
-    public ResponseEntity<EditSuccess> downloadImage(@RequestBody NewDescriptionDto dto, @RequestHeader("Authorization") String token)
-            throws InvalidTokenException, UnauthorizedEditException {
+    public ResponseEntity<EditSuccess> downloadImage(@RequestBody NewDescriptionDto dto, @RequestHeader("Authorization") String token) {
         boolean isValid = jwtTokenProvider.validate(token);
 
         if (isValid) {
@@ -44,8 +42,7 @@ public class ProfilePageController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<Map<String, Object>> getProfilePageJson(@PathVariable String username, @RequestHeader("Authorization") String token)
-            throws InvalidTokenException {
+    public ResponseEntity<Map<String, Object>> getProfilePageJson(@PathVariable String username, @RequestHeader("Authorization") String token) {
         boolean isValid = jwtTokenProvider.validate(token);
 
         if (isValid) {

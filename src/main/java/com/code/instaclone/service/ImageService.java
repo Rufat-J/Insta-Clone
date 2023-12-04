@@ -34,8 +34,7 @@ public class ImageService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public UploadSuccess uploadImage(MultipartFile file, int userId)
-            throws ImageSizeTooLargeException, ByteConversionException, FailedImageUploadException {
+    public UploadSuccess uploadImage(MultipartFile file, int userId) {
         try {
             if (isValidImageSize(file)) {
                 Image image;
@@ -47,7 +46,7 @@ public class ImageService {
                 }
                 imageRepository.save(image);
 
-                return new UploadSuccess("Uploaded successfully");
+                return new UploadSuccess("Uploaded image with id: {" + image.getId() + "} successfully");
             } else {
                 throw new ImageSizeTooLargeException("File size exceeds the allowed limit of 2 megabytes");
             }
@@ -56,7 +55,7 @@ public class ImageService {
         }
     }
 
-    public DownloadImageData downloadImage(int imageId) throws ImageDoesNotExistException {
+    public DownloadImageData downloadImage(int imageId) {
         Image image = getImageById(imageId);
         boolean isExistingImage = (image != null);
 
@@ -69,7 +68,7 @@ public class ImageService {
         }
     }
 
-    public boolean isValidImageSize(MultipartFile file) throws ImageSizeTooLargeException {
+    public boolean isValidImageSize(MultipartFile file) {
         long imageSize = file.getSize();
         long maxSize = 2 * 1024 * 1024; // 2mb
 
@@ -77,7 +76,7 @@ public class ImageService {
     }
 
     @Transactional
-    public DeleteSuccess deleteImage(int userId, int imageId) throws ImageDoesNotExistException {
+    public DeleteSuccess deleteImage(int userId, int imageId) {
         ProfilePage profilePage = findProfilePage(userId);
         int profilePageId = profilePage.getProfilePageId();
         boolean hasPermissionToDeleteImage = imageRepository.isImageBelongingToProfilePage(profilePageId, imageId);

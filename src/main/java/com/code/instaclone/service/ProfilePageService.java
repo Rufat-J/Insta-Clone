@@ -25,7 +25,7 @@ public class ProfilePageService {
         this.userRepository = userRepository;
     }
 
-    public EditSuccess editProfileDescription(int userId, String newDescription) throws UnauthorizedEditException {
+    public EditSuccess editProfileDescription(int userId, String newDescription) {
         boolean hasPermissionToEdit = profilePageRepository.isProfilePageBelongingToUser(userId);
 
         if (hasPermissionToEdit) {
@@ -46,7 +46,7 @@ public class ProfilePageService {
     }
 
     @Transactional
-    public ProfilePage getProfilePage(String username) throws ProfilePageNotFoundException {
+    public ProfilePage getProfilePage(String username) {
         try {
             User user = findUserByUsername(username);
             int userId = user.getId();

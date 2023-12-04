@@ -30,7 +30,7 @@ public class UserService {
         this.profilePageRepository = profilePageRepository;
     }
 
-    public RegisterSuccess register(String username, String password) throws RegistrationFailureException {
+    public RegisterSuccess register(String username, String password) {
         User newUser = new User(username, password);
         try {
             userRepository.save(newUser);
@@ -47,7 +47,7 @@ public class UserService {
         profilePageRepository.save(profilePage);
     }
 
-    public LoginSuccess login(String username, String password) throws InvalidLoginException {
+    public LoginSuccess login(String username, String password) {
         boolean isValidUserDetails = userRepository.isValidUser(username, password);
 
         if (isValidUserDetails) {
